@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="" title=""  description="">
+	  <siteMapNode url="~/Default.aspx" title="Home"  description="optional,  home page, web site startup page" />
+	  <siteMapNode url="~/Contact.aspx" title="Contact"  description="on root menu" />
+	  <siteMapNode url="~/About.aspx" title="About"  description="on root menu" />
+
+	  <siteMapNode url="" title="Exercises" description="the entry on the root menu, BUT  is the start of a drop down menu">
+		  <!--a drop down sub menu item of Samples-->
+		  <siteMapNode url="~/Exercises/ExerciseHome.aspx" title="Exercise Home" description="a sub menu item"/>
+
+	  </siteMapNode>
+  </siteMapNode>
+</siteMap>

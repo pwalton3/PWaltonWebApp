@@ -1,0 +1,134 @@
+﻿@{
+    Layout = "~/_Layout1.cshtml";
+
+    var db = Database.Open("Chinook");
+    var queryStatement = @"SELECT ArtistId, Name
+FROM Artists
+ORDER BY Name";
+    var insert = @"INSERT INTO Albums (Title, ArtistId, ReleaseYear, ReleaseLabel)
+VALUES(@0, @1, @2, @3)";
+
+    var artistSearch = "0";
+    var titlesearch = "";
+    var yearsearch = "0";
+    var labelsearch = "";
+    var ddlResults = db.Query(queryStatement);
+
+    Validation.Add("songtitle",
+        Validator.StringLength(160, 1, "Title can not be  greater than 160 characters and less than 1"),
+    Validator.Required("Title is a required field. Please enter a valid title"));
+
+    Validation.Add("songyear",
+        Validator.Required("Year is required. Please enter a year after 1950"),
+        Validator.Range(1950, 2020, "Year must be between 1950 and 2020"),
+        Validator.Integer("Song year must be a number. Please enter a year greater than 1950"));
+
+    Validation.Add("artistlabel",
+        Validator.StringLength(50, 0, "Label can not be  greater than 50 characters"));
+
+}
+
+
+@section banner{
+    <div>
+        <h1>Exercise 3</h1>
+    </div>
+}
+@if (IsPost)
+
+{
+
+
+    //}
+    //else
+    //{
+    var theButton = Request.Form["theButton"];
+    //why is the button not  working
+    artistSearch = "0";
+    if (theButton.Equals("clear"))
+    {
+        artistSearch = "0";
+        titlesearch = "";
+        yearsearch = "0";
+        labelsearch = "";
+    }
+    else
+    {
+        artistSearch = Request.Form["artistSearch"];
+        titlesearch = Request.Form["songtitle"];
+        yearsearch = Request.Form["songyear"];
+        labelsearch = Request.Form["artistlabel"];
+        if (Validation.IsValid())
+        {
+            artistSearch = Request.Form["artistSearch"];
+            if (artistSearch.Equals("0"))
+            {
+                <p><span style="color:teal">Please make a artist selection</span></p>
+            }
+            else
+            {
+                var querysearch = @"SELECT ArtistId, Name
+                                    FROM Artists
+                                    ORDER BY Name";
+
+
+                var results = db.Query(querysearch, artistSearch);
+
+                if (string.IsNullOrEmpty(titlesearch))
+                {
+                    throw new Exception("Invalid title, please enter a valid title");
+                }
+                else
+                {
+                    insert = @"INSERT INTO Albums (Title, ArtistId, ReleaseYear, ReleaseLabel)
+        VALUES(@0, @1, @2, @3)";
+                    db.Execute(insert,
+                        string.IsNullOrEmpty(titlesearch) ? null : titlesearch,
+                        int.Parse(artistSearch) == -1 ? null : artistSearch,
+                        string.IsNullOrEmpty(yearsearch) ? null : yearsearch,
+                        string.IsNullOrEmpty(labelsearch) ? null : labelsearch);
+                    var lastPrimaryKeyValue = db.GetLastInsertId();
+                <p><span style="color:blueviolet">New  artist added @lastPrimaryKeyValue</span></p>
+                }
+            }
+        }
+        else
+        {
+            artistSearch = "0";
+            titlesearch = "";
+            yearsearch = "";
+            labelsearch = "";
+
+        }
+    }
+}
+@Html.ValidationSummary()
+<div class="form-group">
+    <form id="theForm" method="post">
+        <div class="col-sm-3">
+            <label for="songtitle">Title</label>
+            <input id="songtitle" type="text" name="songtitle" value="@titlesearch" />
+            <label for="artistSearch">Artist:</label>
+            <select name="artistSearch" id="artistSearch">
+                <option value="0">select...</option>
+                @foreach (var item in ddlResults)
+                {
+                    if (item.ArtistId.ToString() == artistSearch)
+                    {
+                        <option value="@item.ArtistId" selected>@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ArtistId">@item.Name</option>
+                    }
+                }
+            </select>
+            <label for="songyear">Year:</label>
+            <input name="songyear" id="songyear" value="@yearsearch" />
+            <label for="artistlabel">Label:</label>
+            <input name="artistlabel" id="artistlabel" value="@labelsearch" />
+            <button type="submit" name="theButton" id="theButton" value="submit" class="btn btn-primary">Search</button>
+            <button type="submit" name="theButton" id="theButton" value="clear">Clear</button>
+        </div>
+    </form>
+</div>

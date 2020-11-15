@@ -1,0 +1,51 @@
+﻿@{
+    Page.Title = "Exercise 2";
+    Layout = "~/_Layout1.cshtml";
+    var artistSearch = Request.Form["artistSearch"];
+
+    var db = Database.Open("Chinook");
+
+    var partialstring = "%" + artistSearch + "%";
+    var queryStatement = @"SELECT ArtistId FROM Artists WHERE Name like @0";
+    
+    
+
+}
+
+@section banner{<div><h1>Exercise 02 </h1></div>}
+
+@if (IsPost)
+{
+    artistSearch = Request.Form["artistSearch"];
+    if (artistSearch.IsEmpty())
+    {
+        <p><span style="color: teal">Please enter an artist name</span></p>
+    }
+    else
+    {
+      
+        var results = db.Query(queryStatement, partialstring);
+        if (results.Count() == 0)
+        {
+            <p><span style="color:teal">there are no artist for your selection.</span></p>
+        }
+        else
+        {
+            Response.Redirect("Exercise02_B.cshtml?artistsearch=" + artistSearch);
+        }
+    }
+}
+else
+{
+    
+}
+
+<form id="theForm" method="post">
+
+    <div>
+        <label id="textboxvalue">enter artist song/album name</label><br />
+        <input type="text" name="artistSearch" value="@artistSearch" /><br /><br />
+        <button type="submit" class="btn btn-primary" name="search" id="theSearch">Search</button>
+
+    </div>
+</form>

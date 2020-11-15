@@ -1,0 +1,126 @@
+﻿@{
+
+    Layout = "~/_Layout1.cshtml";
+    Page.Title = "Exercise 1";
+
+    string name = "";
+    string choices = Request.Form["CheckBoxGroup"];
+    string entereddata = "";
+
+}
+
+@section banner {<h1>Exercise01: Basic Form Processing</h1>}
+
+@if (IsPost)
+{
+    name = Request.Form["customername"];
+    var thebutton = Request.Form["PressMe"];
+
+
+    if (thebutton.Equals("submit"))
+    {
+        entereddata = name;
+
+        //this is where all the procesing for my feilds should be done1
+        //add logic to check for name
+        //take out is post put in condition to check for name
+        if (string.IsNullOrEmpty(entereddata))
+        {
+            entereddata = "Please enter your name";
+            if (choices.IsEmpty())
+            {
+                  
+
+                choices = "";
+            }
+
+
+
+        }
+        else
+        {
+
+
+
+            if (choices.IsEmpty())
+            {
+                <p><span style="color: teal">So you don't like to eat.</span></p>
+
+                choices = "";
+            }
+            else
+            {
+                //add an if statment to check if name was entered
+                <p>
+                    I see you, @name like to eat the following food(s):
+                    <ul>
+                        @foreach (var item in choices.Split(','))
+                        {
+                            <li>@item</li>
+                        }
+                    </ul>
+                </p>
+            }
+        }
+    }
+    else
+    {
+
+        name = "";
+        choices = "";
+
+
+    }
+
+
+}
+else
+{
+    choices = "";
+}
+
+
+
+
+
+<form id="EX01" method="post">
+    <div class="row">
+        <div class="col-md-7">
+            <label for="CheckBoxGroup"><strong>Choose your meal items:</strong></label><br />
+            <input type="checkbox" name="CheckBoxGroup" id="CheckBoxGroup" value="Beef"
+                   @(Array.IndexOf(choices.Split(','), "Beef") >= 0 ? "checked" : "") />Beef<br />
+            <input type="checkbox" name="CheckBoxGroup" id="CheckBoxGroup" value="Chicken"
+                   @(Array.IndexOf(choices.Split(','), "Chicken") >= 0 ? "checked" : "") />Chicken<br />
+            <input type="checkbox" name="CheckBoxGroup" id="CheckBoxGroup" value="Vegtables"
+                   @(Array.IndexOf(choices.Split(','), "Vegtables") >= 0 ? "checked" : "") />Vegtables<br />
+        </div>
+        <div class="col-md-4">
+            <table>
+                <tr>
+                    <td class="col">Customer Name:</td>
+                    <td>
+                        <input type="text" id="customername" name="customername" value="@name" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <label>@entereddata</label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col">
+            <br />
+            <br />
+            <button type="submit" name="PressMe" id="PressMe" value="submit"
+                    class="btn btn-primary">
+                Submit
+            </button>
+            <button type="reset" name="PressMe" id="PressMe" value="clear"
+                    class="btn">
+                Reset
+            </button>
+        </div>
+    </div>
+</form>

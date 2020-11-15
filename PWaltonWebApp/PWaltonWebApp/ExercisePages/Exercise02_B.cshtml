@@ -1,0 +1,46 @@
+﻿@{
+    Layout = "~/_Layout1.cshtml";
+    Page.Title = "";
+
+    var artistSearch = Request.QueryString["artistSearch"];
+    string partialstring = "%" + artistSearch + "%";
+    if (string.IsNullOrEmpty(artistSearch))
+    {
+        Response.Redirect("Exercise02_A.cshtml");
+    }
+    var db = Database.Open("Chinook");
+    var querysearch = @"SELECT ArtistId, Name
+                        FROM Artists
+                        WHERE Name like @0
+                        ORDER BY Name";
+    var results = db.Query(querysearch, partialstring);
+
+    
+}
+@if(IsPost)
+{
+    if(results.Count() == 0)
+    {
+
+    }
+
+}
+else
+{
+
+}
+
+
+@section banner{<h1>Albums and  Artists</h1>}
+
+<div class="row">
+    <h3>Artist:@artistSearch</h3>
+</div>
+<div class="row">
+    <div class="col-10">
+ 
+    </div>
+</div>
+
+
+
